@@ -7,7 +7,9 @@
 ##' @param offset offset of heatmap to tree
 ##' @param width total width of heatmap, compare to width of tree
 ##' @param low color of lowest value
+##' @param mid color of middle value
 ##' @param high color of highest value
+##' @param midpoint middle point of color scale
 ##' @param color color of heatmap cell border
 ##' @param colnames logical, add matrix colnames or not
 ##' @param colnames_position one of 'bottom' or 'top'
@@ -26,16 +28,18 @@
 ##' @importFrom ggplot2 element_blank
 ##' @importFrom ggplot2 guides
 ##' @importFrom ggplot2 guide_legend
-##' @importFrom ggplot2 scale_fill_gradient
+##' @importFrom ggplot2 scale_fill_gradient2
 ##' @importFrom ggplot2 scale_fill_discrete
 ##' @importFrom ggplot2 scale_y_continuous
 ##' @importFrom dplyr filter
 ##' @importFrom dplyr select
 ##' @export
 ##' @author Guangchuang Yu
-gheatmap <- function(p, data, offset=0, width=1, low="green", high="red", color="white",
-                     colnames=TRUE, colnames_position="bottom", colnames_angle=0, colnames_level=NULL,
-                     colnames_offset_x = 0, colnames_offset_y = 0, font.size=4, family="", hjust=0.5, legend_title = "value") {
+gheatmap <- function(p, data, offset=0, width=1, low="red", mid="white", high="blue", midpoint=0.0,
+					 use_scale_fill_gradient2=F, color="white", colnames=TRUE, 
+					 colnames_position="bottom", colnames_angle=0, colnames_level=NULL, 
+					 colnames_offset_x = 0, colnames_offset_y = 0, font.size=4, family="", hjust=0.5, 
+					 legend_title = "value") {
 
     colnames_position %<>% match.arg(c("bottom", "top"))
     variable <- value <- lab <- y <- NULL
@@ -108,7 +112,11 @@ gheatmap <- function(p, data, offset=0, width=1, low="green", high="red", color=
         p2 <- p + geom_tile(data=dd, aes(x, y, fill=value), width=width, color=color, inherit.aes=FALSE)
     }
     if (is(dd$value,"numeric")) {
-        p2 <- p2 + scale_fill_gradient(low=low, high=high, na.value=NA, name = legend_title) # "white")
+		if (use_scale_fill_gradient2) {
+			p2 <- p2 + scale_fill_gradient2(low=low, mid=mid, high=high, midpoint=midpoint, na.value=NA, name = legend_title)
+		} else {
+			p2 <- p2 + scale_fill_gradient(low=low, high=high, na.value=NA, name = legend_title) 
+		}
     } else {
         p2 <- p2 + scale_fill_discrete(na.value=NA, name = legend_title) #"white")
     }
