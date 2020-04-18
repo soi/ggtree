@@ -36,8 +36,8 @@
 ##' @export
 ##' @author Guangchuang Yu
 gheatmap <- function(p, data, offset=0, width=1, low="red", mid="white", high="blue", midpoint=0.0,
-					 use_scale_fill_gradient2=F, color="white", colnames=TRUE, 
-					 colnames_position="bottom", colnames_angle=0, colnames_level=NULL, 
+					 use_scale_fill_gradient2=F, use_scale_fill_viridis_d=F, color="white", 
+					 colnames=TRUE, colnames_position="bottom", colnames_angle=0, colnames_level=NULL, 
 					 colnames_offset_x = 0, colnames_offset_y = 0, font.size=4, family="", hjust=0.5, 
 					 legend_title = "value") {
 
@@ -113,12 +113,14 @@ gheatmap <- function(p, data, offset=0, width=1, low="red", mid="white", high="b
     }
     if (is(dd$value,"numeric")) {
 		if (use_scale_fill_gradient2) {
-			p2 <- p2 + scale_fill_gradient2(low=low, mid=mid, high=high, midpoint=midpoint, na.value=NA, name = legend_title)
+			p2 <- p2 + scale_fill_gradient2(low=low, mid=mid, high=high, midpoint=midpoint, na.value=NA, name=legend_title)
+		} else if (use_scale_fill_viridis_d) {
+			p2 <- p2 + scale_fill_viridis_c(name=legend_title)
 		} else {
-			p2 <- p2 + scale_fill_gradient(low=low, high=high, na.value=NA, name = legend_title) 
+			p2 <- p2 + scale_fill_gradient(low=low, high=high, na.value=NA, name=legend_title) 
 		}
     } else {
-        p2 <- p2 + scale_fill_discrete(na.value=NA, name = legend_title) #"white")
+        p2 <- p2 + scale_fill_discrete(na.value=NA, name=legend_title)
     }
 
     if (colnames) {
